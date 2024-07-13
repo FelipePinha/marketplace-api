@@ -4,18 +4,35 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6'
-        ]);
+        $validateUser = Validator::make($request->all(),
+            [
+                'email' => 'required|email',
+                'password' => 'required'
+            ], [
+                'email.required' => 'O email é obrigatório.',
+                'email.email' => 'Email inválido.',
+                'password.required' => 'A senha é obrigatória.',
+            ]
+        );
+
+        if($validateUser->fails()) {
+            return response()->json([
+                'errors' => $validateUser->errors()
+            ], 400);
+        }
+
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password
+        ];
 
         if(Auth::attempt($credentials)) {
             $user = Auth::user();
@@ -27,17 +44,43 @@ class AuthController extends Controller
                 'user' => $user 
              ], 201);
         }
+
+        return response()->json([
+            'errors' => [
+                'message' => 'Email ou Senha incorretos'
+            ] 
+        ], 401);
     }
 
     public function register(Request $request)
     {
-        $credentials = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed|min:6'
-        ]);
+        $validateUser = Validator::make($request->all(),
+            [
+                'name' => 'required',
+                'email' => 'required|email|unique:users',
+                'password' => 'required|confirmed|min:6'
+            ], [
+                'name' => 'O nome é obrigatório.',
+                'email.required' => 'O email é obrigatório.',
+                'email.email' => 'Email inválido.',
+                'email.unique' => 'Este email já foi cadastrado.',
+                'password.required' => 'A senha é obrigatória.', 
+                'password.confirmed' => 'As senhas precisam ser iguais.',
+                'password.min' => 'A senha deve ter mais do que 6 caractéres.' 
+            ]
+        );
 
-        $user = User::create($credentials);
+        if($validateUser->fails()) {
+            return response()->json([
+                'errors' => $validateUser->errors()
+            ], 400);
+        }
+
+        $user = User::create([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => $request->password
+        ]);
 
         $token = $user->createToken($request->name)->plainTextToken;
 
