@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', [UserController::class, 'index'])->middleware('auth:sanctum');
+Route::controller(UserController::class)->group(function() {
+    Route::get('/user', 'index')->middleware('auth:sanctum');
+});
 
 Route::controller(AuthController::class)->group(function() {
     Route::post('/login', 'login')->name('login');
@@ -16,4 +19,9 @@ Route::controller(AuthController::class)->group(function() {
 Route::controller(ProductController::class)->group(function() {
     Route::get('/products', 'index');
     Route::post('/products/create', 'store');
+});
+
+Route::controller(OrdersController::class)->group(function() {
+    Route::get('/orders/{user}', 'index');
+    Route::post('/orders/create', 'store');
 });

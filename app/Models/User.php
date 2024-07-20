@@ -12,16 +12,18 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
     ];
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -53,6 +55,6 @@ class User extends Authenticatable
 
     public function productsAsOrders()
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'orders', 'user_id', 'product_id');
     }
 }
