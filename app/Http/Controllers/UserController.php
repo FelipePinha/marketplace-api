@@ -23,16 +23,30 @@ class UserController extends Controller
     public function showOrders(User $user)
     {  
         return response()->json([
+            'status' => true,
             'orders' => $user->productsAsOrders
         ], 200);
     }
 
     public function storeOrder(User $user, Product $product, Request $request)
-    {  
+    {
+        $quantityToDecrease = $product->quantity - $request->quantity;
+        
+        if($quantityToDecrease < 0) {
+            return response()->json([
+                'status' => false,
+                'message' => 'houve um erro ao adicionar no carrinho. Tente novamente!'
+            ], 400);
+        }
+
+        $product->update(['quantity' => $quantityToDecrease]);
+
         $user->productsAsOrders()->attach($product->id, ["price" => $request->price, "quantity" => $request->quantity]);
 
         return response()->json([
-            'message' => 'Produto adicionado ao carrinho!'
+            'status' => true,
+            'message' => 'Produto adicionado ao carrinho!',
+            'orders' => $user->productsAsOrders()
         ], 200);
     }
 }
