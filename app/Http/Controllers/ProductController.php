@@ -26,6 +26,7 @@ class ProductController extends Controller
         [
             'user_id' => ['required', 'exists:users,id'],
             'name' => 'required',
+            'image' => ['required', 'max:1024'],
             'description' => 'required',
             'price' => 'required',
             'quantity' => 'required'
@@ -38,9 +39,17 @@ class ProductController extends Controller
             ], 400);
         }
 
+        $filename = '';
+        if($request->hasFile('image')) {
+            $filename = $request->file('image')->store('products', 'public');
+        } else {
+            $filename = null;
+        }
+
         $product = Product::create([
             "user_id" => $request->user_id,
             "name" => $request->name,
+            "image" => $filename,
             "description" => $request->description,
             "price" => $request->price,
             "quantity" => $request->quantity
