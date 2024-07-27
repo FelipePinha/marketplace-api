@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(UserController::class)->group(function() {
     Route::get('/user', 'index')->middleware('auth:sanctum');
     Route::get('/user/{user}/orders', 'showOrders');
-    Route::post('/user/orders/create/{user}/{product}', 'storeOrder');
+    Route::post('/user/orders/create', 'storeOrder');
 });
 
 Route::controller(AuthController::class)->group(function() {

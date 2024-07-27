@@ -28,8 +28,11 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function storeOrder(User $user, Product $product, Request $request)
+    public function storeOrder(Request $request)
     {
+        $product = Product::find($request->product_id);
+        $user = User::find($request->user_id);
+
         $quantityToDecrease = $product->quantity - $request->quantity;
         
         if($quantityToDecrease < 0) {
