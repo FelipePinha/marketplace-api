@@ -7,6 +7,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use function PHPUnit\Framework\isNull;
+
 class ProductController extends Controller
 {
     public function index()
@@ -48,5 +50,13 @@ class ProductController extends Controller
             'status' => true,
             'product' => $product
         ], 201);
+    }
+
+    public function show(Product $product)
+    {
+        return response()->json([
+            "status" => true,
+            "product" => $product
+        ]);
     }
 }
