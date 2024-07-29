@@ -27,7 +27,7 @@ class ProductController extends Controller
         $validateProduct = Validator::make($request->all(), 
         [
             'user_id' => ['required', 'exists:users,id'],
-            'category_id' => ['required'],
+            'category_id' => ['required', 'exists:categories,id'],
             'name' => 'required',
             'image' => ['required', 'max:1024'],
             'description' => 'required',
@@ -51,6 +51,7 @@ class ProductController extends Controller
 
         $product = Product::create([
             "user_id" => $request->user_id,
+            "category_id" => $request->category_id,
             "name" => $request->name,
             "image" => $filename,
             "description" => $request->description,
