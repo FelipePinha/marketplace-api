@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-use function PHPUnit\Framework\isNull;
-
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        $order = $request->query('order', 'asc');
+        $limit = $request->query('limit', Product::count());
+        
+        $products = Product::orderBy('id', $order)->limit($limit)->get();
 
         return response()->json([
             'products' => $products
@@ -25,6 +27,7 @@ class ProductController extends Controller
         $validateProduct = Validator::make($request->all(), 
         [
             'user_id' => ['required', 'exists:users,id'],
+            'category_id' => ['required'],
             'name' => 'required',
             'image' => ['required', 'max:1024'],
             'description' => 'required',
