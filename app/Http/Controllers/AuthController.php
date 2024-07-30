@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,25 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(AuthRequest $request)
     {
-        $validateUser = Validator::make($request->all(),
-            [
-                'email' => 'required|email',
-                'password' => 'required'
-            ], [
-                'email.required' => 'O email é obrigatório.',
-                'email.email' => 'Email inválido.',
-                'password.required' => 'A senha é obrigatória.',
-            ]
-        );
-
-        if($validateUser->fails()) {
-            return response()->json([
-                'errors' => $validateUser->errors()
-            ], 400);
-        }
-
         $credentials = [
             'email' => $request->email,
             'password' => $request->password
@@ -52,30 +37,8 @@ class AuthController extends Controller
         ], 401);
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $validateUser = Validator::make($request->all(),
-            [
-                'name' => 'required',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|confirmed|min:6'
-            ], [
-                'name' => 'O nome é obrigatório.',
-                'email.required' => 'O email é obrigatório.',
-                'email.email' => 'Email inválido.',
-                'email.unique' => 'Este email já foi cadastrado.',
-                'password.required' => 'A senha é obrigatória.', 
-                'password.confirmed' => 'As senhas precisam ser iguais.',
-                'password.min' => 'A senha deve ter mais do que 6 caractéres.' 
-            ]
-        );
-
-        if($validateUser->fails()) {
-            return response()->json([
-                'errors' => $validateUser->errors()
-            ], 400);
-        }
-
         $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
