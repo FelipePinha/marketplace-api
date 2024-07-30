@@ -3,20 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
-    {
+    {     
+        $category_id = $request->query('category');
+        if($category_id) {
+            $category = Category::find($category_id);
+
+            return response()->json([
+                'status' => true,
+                'products' => $category->products
+            ]);
+        }
+        
+        $search = $request->query('search');
+        if($search) {
+            $product = Product::where('name', 'like', "%{$search}%")->get();
+
+            return response()->json([
+                'status' => true,
+                'product' => $product
+            ]);
+        }
+
         $order = $request->query('order', 'asc');
         $limit = $request->query('limit', Product::count());
-        
-        $products = Product::orderBy('id', $order)->limit($limit)->get();
 
+        $products = Product::orderBy('id', $order)->limit($limit)->get();
+        
         return response()->json([
             'products' => $products
         ]);
