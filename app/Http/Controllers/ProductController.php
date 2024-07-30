@@ -12,6 +12,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {     
+        // Check if has an query for category id, then filter products by the category.
         $category_id = $request->query('category');
         if($category_id) {
             $category = Category::find($category_id);
@@ -22,13 +23,14 @@ class ProductController extends Controller
             ]);
         }
         
+        // Check if has an search query, then filter products based on the search.
         $search = $request->query('search');
         if($search) {
-            $product = Product::where('name', 'like', "%{$search}%")->get();
+            $products = Product::where('name', 'like', "%{$search}%")->get();
 
             return response()->json([
                 'status' => true,
-                'product' => $product
+                'product' => $products
             ]);
         }
 
