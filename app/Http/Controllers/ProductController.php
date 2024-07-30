@@ -94,4 +94,48 @@ class ProductController extends Controller
             "product" => $product
         ]);
     }
+
+    public function update(Request $request)
+    {
+        $validateProduct = Validator::make($request->all(), 
+        [
+            'user_id' => ['required', 'exists:users,id'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'product_id' => ['required', 'exists:products,id'],
+            'name' => 'required',
+            'image' => ['required', 'max:1024'],
+            'description' => 'required',
+            'price' => 'required',
+            'quantity' => 'required'
+        ]);
+
+        if($validateProduct->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Não foi possível editar o produto.'
+            ], 400);
+        }
+
+        $filename = '';
+        if($request->hasFile('image')) {
+            $filename = $request->file('image')->store('products', 'public');
+        } else {
+            $filename = null;
+        }
+
+        Product::where('id', $request->product_id)->update([
+            "user_id" => $request->user_id,
+            "category_id" => $request->category_id,
+            "name" => $request->name,
+            "image" => $filename,
+            "description" => $request->description,
+            "price" => $request->price,
+            "quantity" => $request->quantity
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'produto editado com sucesso'
+        ]);
+    }
 }

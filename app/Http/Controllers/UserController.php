@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $user = Auth::user();
 
