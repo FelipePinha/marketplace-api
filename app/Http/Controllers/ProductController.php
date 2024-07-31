@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
@@ -113,6 +114,16 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        $user = Auth::user();
+        $hasProduct = $user->products->find($product->id);
+
+        if(! $hasProduct) {
+            return response()->json([
+                'status' => false,
+                'message' => 'você não tem permissão para deletar este produto.'
+            ], 400);
+        }
+
         $product->delete();
         
         return response()->json([
