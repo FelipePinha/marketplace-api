@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -44,26 +45,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        $validateProduct = Validator::make($request->all(), 
-        [
-            'user_id' => ['required', 'exists:users,id'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'name' => 'required',
-            'image' => ['required', 'max:1024'],
-            'description' => 'required',
-            'price' => 'required',
-            'quantity' => 'required'
-        ]);
-
-        if($validateProduct->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Não foi possível criar o produto.'
-            ], 400);
-        }
-
+       
         $filename = '';
         if($request->hasFile('image')) {
             $filename = $request->file('image')->store('products', 'public');
@@ -95,26 +79,13 @@ class ProductController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(ProductRequest $request)
     {
-        $validateProduct = Validator::make($request->all(), 
-        [
-            'user_id' => ['required', 'exists:users,id'],
-            'category_id' => ['required', 'exists:categories,id'],
-            'product_id' => ['required', 'exists:products,id'],
-            'name' => 'required',
-            'image' => ['required', 'max:1024'],
-            'description' => 'required',
-            'price' => 'required',
-            'quantity' => 'required'
+        $request->validate([
+            'product_id' => 'required'
+        ], [
+            'product_id.required' => 'produto não reconhecido.'
         ]);
-
-        if($validateProduct->fails()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Não foi possível editar o produto.'
-            ], 400);
-        }
 
         $filename = '';
         if($request->hasFile('image')) {
