@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -107,6 +108,16 @@ class ProductController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'produto editado com sucesso'
+        ]);
+    }
+
+    public function destroy(Product $product)
+    {
+        $product->delete();
+        
+        return response()->json([
+            'status' => true,
+            'message' => 'item deletado com sucesso'
         ]);
     }
 }
