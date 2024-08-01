@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    /**
+     * Method that login the user, create and return the access token
+     */
     public function login(AuthRequest $request)
     {
         $credentials = [
@@ -37,6 +38,9 @@ class AuthController extends Controller
         ], 401);
     }
 
+    /**
+     * Method that register the user, create and return the access token
+     */
     public function register(RegisterRequest $request)
     {
         $user = User::create([
@@ -53,6 +57,9 @@ class AuthController extends Controller
         ], 201);
     }
 
+    /**
+     * Method that delete the token and logout the user
+     */
     public function logout(User $user)
     {
         $user->tokens()->delete();

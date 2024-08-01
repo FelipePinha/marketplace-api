@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+
+    /**
+     * Method that returns a list of products
+     */
     public function index(Request $request)
     {     
         // Check if has an query for category id, then filter products by the category.
@@ -45,6 +49,9 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Method that creates a new product and store on db
+     */
     public function store(ProductRequest $request)
     {
        
@@ -79,6 +86,9 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Method that updates product data
+     */
     public function update(ProductRequest $request)
     {
         $request->validate([
@@ -110,11 +120,15 @@ class ProductController extends Controller
         ]);
     }
 
+    /**
+     * Method that delete a product.
+     */
     public function destroy(Product $product)
     {
         $user = Auth::user();
         $hasProduct = $user->products->find($product->id);
 
+        // Check if the product was created by the user
         if(! $hasProduct) {
             return response()->json([
                 'status' => false,
