@@ -30,12 +30,6 @@ class AuthController extends Controller
                 'user' => $user 
              ], 201);
         }
-
-        return response()->json([
-            'errors' => [
-                'email' => ['Email ou Senha incorretos']
-            ] 
-        ], 401);
     }
 
     /**
