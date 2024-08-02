@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderRequest;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function storeOrder(Request $request)
+    public function storeOrder(OrderRequest $request)
     {
         $product = Product::find($request->product_id);
         $user = User::find($request->user_id);
