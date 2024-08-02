@@ -6,7 +6,7 @@
 - **URL:** `/login`
 - **Método:** `POST`
 - **Descrição:** Realiza o login de um usuário e retorna um token de autenticação.
-- **Parâmetros:**
+- **Body:**
   - `email` (string): O e-mail do usuário.
   - `password` (string): A senha do usuário.
 - **Resposta de Sucesso:**
@@ -14,7 +14,7 @@
   - Corpo: `{
     "token": "string",
     "user": {
-        "id": "int",
+        "id": int,
         "name": "string",
         "email": "string",
         "created_at": "string",
@@ -38,7 +38,7 @@
 - **URL:** `/register`
 - **Método:** `POST`
 - **Descrição:** Registra um novo usuário e retorna um token de autenticação.
-- **Parâmetros:**
+- **Body:**
   - `name` (string): O nome do usuário.
   - `email` (string): O e-mail do usuário.
   - `password` (string): A senha do usuário.
@@ -75,6 +75,19 @@
 
 ## Rotas Protegidas (Requer Autenticação)
 
+### Logout
+- **URL:** `/logout/{user}`
+- **Método:** `POST`
+- **Descrição:** Realiza o logout do usuário autenticado.
+- **Parâmetros:**
+  - `user` (integer): O ID do usuário.
+- **Resposta de Sucesso:**
+  - Código: `200 OK`
+  - Corpo: `{ "message": "Deslogado(a) com sucesso" }`
+- **Resposta de Erro:**
+  - Código: `401 Unauthorized`
+  - Corpo: `{ "error": "Unauthenticated" }`
+
 ### Obter Informações do Usuário
 - **URL:** `/user`
 - **Método:** `GET`
@@ -82,7 +95,7 @@
 - **Resposta de Sucesso:**
   - Código: `200 OK`
   - Corpo: `"user": {
-        "id": "int",
+        "id": int,
         "name": "string",
         "email": "string",
         "created_at": "string",
@@ -110,7 +123,7 @@
             "name": "string",
             "image": "string",
             "description": "string",
-            "price": "string",
+            "price": "decimal",
             "quantity": int,
             "created_at": "string",
             "updated_at": "string",
@@ -130,59 +143,129 @@
 - **URL:** `/user/orders/create`
 - **Método:** `POST`
 - **Descrição:** Cria um novo pedido para o usuário autenticado.
-- **Parâmetros:**
+- **Body:**
+  - `user_id` (integer): O ID do usuário.
   - `product_id` (integer): O ID do produto.
+  - `price` (decimal): O preço do total do produto.
   - `quantity` (integer): A quantidade do produto.
 - **Resposta de Sucesso:**
   - Código: `201 Created`
-  - Corpo: `{ "order_id": "integer", "status": "string" }`
+  - Corpo: `{
+    "status": true,
+    "message": "Produto adicionado ao carrinho!",
+  }`
 - **Resposta de Erro:**
   - Código: `400 Bad Request`
-  - Corpo: `{ "error": "Validation errors" }`
-
-### Logout
-- **URL:** `/logout/{user}`
-- **Método:** `POST`
-- **Descrição:** Realiza o logout do usuário autenticado.
-- **Parâmetros:**
-  - `user` (integer): O ID do usuário.
-- **Resposta de Sucesso:**
-  - Código: `200 OK`
-  - Corpo: `{ "message": "Logged out successfully" }`
-- **Resposta de Erro:**
-  - Código: `401 Unauthorized` ou `404 Not Found`
-  - Corpo: `{ "error": "Unauthenticated" }` ou `{ "error": "User not found" }`
+  - Corpo: `"errors": {
+        "user_id": [
+            "O id do usuário é obrigatório."
+        ],
+        "product_id": [
+            "O id do produto é obrigatório."
+        ],
+        "price": [
+            "O preço total é obrigatório."
+        ],
+        "quantity": [
+            "A quantidade é obrigatória."
+        ]
+    }`
 
 ### Criar Produto
 - **URL:** `/products/create`
 - **Método:** `POST`
 - **Descrição:** Adiciona um novo produto ao sistema.
-- **Parâmetros:**
+- **Body:**
+  - `user_id` (string): id do usuário.
+  - `category_id` (string): id da categoria.
   - `name` (string): Nome do produto.
-  - `price` (decimal): Preço do produto.
+  - `image` (string): Url da imagem do produto.
   - `description` (string): Descrição do produto.
+  - `price` (decimal): Preço do produto.
+  - `quantity` (int): Quantidade do produto.
 - **Resposta de Sucesso:**
   - Código: `201 Created`
-  - Corpo: `{ "product_id": "integer", "name": "string", "price": "decimal" }`
+  - Corpo: `{
+    "status": true,
+    "product": {
+        "user_id": "string",
+        "category_id": "string",
+        "name": "string",
+        "image": "string",
+        "description": "string",
+        "price": "decimal",
+        "quantity": int,
+        "updated_at": "string",
+        "created_at": "string",
+        "id": int
+    }
+}`
 - **Resposta de Erro:**
   - Código: `400 Bad Request`
-  - Corpo: `{ "error": "Validation errors" }`
+  - Corpo: `"errors": {
+        "user_id": [
+            "O id do usuário é obrigatório"
+        ],
+        "category_id": [
+            "O id da categoria é obrigatório"
+        ],
+        "name": [
+            "O nome do produto é obrigatório."
+        ],
+        "image": [
+            "É obrigatório o envio de uma imagem."
+        ],
+        "description": [
+            "A descrição é obrigatória"
+        ],
+        "price": [
+            "A preço é obrigatório"
+        ],
+        "quantity": [
+            "A quantidade é obrigatória"
+        ]
+    }`
 
 ### Atualizar Produto
 - **URL:** `/products/update`
-- **Método:** `POST`
+- **Método:** `Patch`
 - **Descrição:** Atualiza as informações de um produto existente.
-- **Parâmetros:**
-  - `product_id` (integer): ID do produto.
-  - `name` (string, opcional): Nome do produto.
-  - `price` (decimal, opcional): Preço do produto.
-  - `description` (string, opcional): Descrição do produto.
+- **Body:**
+  - `user_id` (string): id do usuário.
+  - `category_id` (string): id da categoria.
+  - `name` (string): Nome do produto.
+  - `image` (string): Url da imagem do produto.
+  - `description` (string): Descrição do produto.
+  - `price` (decimal): Preço do produto.
+  - `quantity` (int): Quantidade do produto.
 - **Resposta de Sucesso:**
   - Código: `200 OK`
-  - Corpo: `{ "message": "Product updated successfully" }`
+  - Corpo: `{ 'status' => true, 'message' => 'produto editado com sucesso' }`
 - **Resposta de Erro:**
   - Código: `400 Bad Request`
-  - Corpo: `{ "error": "Validation errors" }`
+  - Corpo: `"errors": {
+        "user_id": [
+            "O id do usuário é obrigatório"
+        ],
+        "category_id": [
+            "O id da categoria é obrigatório"
+        ],
+        "name": [
+            "O nome do produto é obrigatório."
+        ],
+        "image": [
+            "É obrigatório o envio de uma imagem."
+        ],
+        "description": [
+            "A descrição é obrigatória"
+        ],
+        "price": [
+            "A preço é obrigatório"
+        ],
+        "quantity": [
+            "A quantidade é obrigatória"
+        ]
+    }`
 
 ### Deletar Produto
 - **URL:** `/products/delete/{product}`
@@ -192,10 +275,16 @@
   - `product` (integer): ID do produto.
 - **Resposta de Sucesso:**
   - Código: `200 OK`
-  - Corpo: `{ "message": "Product deleted successfully" }`
+  - Corpo: `{
+    "status": true,
+    "message": "item deletado com sucesso"
+}`
 - **Resposta de Erro:**
   - Código: `404 Not Found`
-  - Corpo: `{ "error": "Product not found" }`
+  - Corpo: `{ 
+      'status' => false,
+      'message' => 'você não tem permissão para deletar este produto.'
+   }`
 
 ## Rotas Públicas
 
@@ -203,12 +292,27 @@
 - **URL:** `/products`
 - **Método:** `GET`
 - **Descrição:** Obtém a lista de todos os produtos.
+- **Opções:**
+  - `order` (asc, desc): Ordem de exibição dos produtos.
+  - `limit`: Quantidade de produtos a serem exibidos.
+  - `category` (category_id): Exibir produtos de uma determinada categoria.
+  - `search`: Exibe produtos baseados em uma busca.
 - **Resposta de Sucesso:**
   - Código: `200 OK`
-  - Corpo: `[ { "product_id": "integer", "name": "string", "price": "decimal" }, ... ]`
-- **Resposta de Erro:**
-  - Código: `500 Internal Server Error`
-  - Corpo: `{ "error": "Server error" }`
+  - Corpo: `"products": [
+      {
+          "id": int,
+          "user_id": int,
+          "category_id": int,
+          "name": "string",
+          "image": "string",
+          "description": "string",
+          "price": "decimal",
+          "quantity": int,
+          "created_at": "string",
+          "updated_at": "string"
+      }
+  ]`
 
 ### Obter Detalhes do Produto
 - **URL:** `/products/{product}`
@@ -218,9 +322,20 @@
   - `product` (integer): ID do produto.
 - **Resposta de Sucesso:**
   - Código: `200 OK`
-  - Corpo: `{ "product_id": "integer", "name": "string", "price": "decimal", "description": "string" }`
-- **Resposta de Erro:**
-  - Código: `404 Not Found`
-  - Corpo: `{ "error": "Product not found" }`
+  - Corpo: `{
+    "status": boolean,
+    "product": {
+        "id": int,
+        "user_id": int,
+        "category_id": int,
+        "name": "string",
+        "image": "string",
+        "description": "string",
+        "price": "decimal",
+        "quantity": int,
+        "created_at": "string",
+        "updated_at": "string"
+    }
+}`
 
 
