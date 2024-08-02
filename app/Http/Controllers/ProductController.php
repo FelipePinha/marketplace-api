@@ -127,7 +127,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'você não tem permissão para deletar este produto.'
-            ], 400);
+            ], 401);
         }
 
         $product->delete();
