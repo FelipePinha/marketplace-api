@@ -89,14 +89,8 @@ class ProductController extends Controller
     /**
      * Method that updates product data
      */
-    public function update(ProductRequest $request)
+    public function update(ProductRequest $request, Product $product)
     {
-        $request->validate([
-            'product_id' => 'required'
-        ], [
-            'product_id.required' => 'produto não reconhecido.'
-        ]);
-
         $filename = '';
         if($request->hasFile('image')) {
             $filename = $request->file('image')->store('products', 'public');
@@ -104,7 +98,7 @@ class ProductController extends Controller
             $filename = null;
         }
 
-        Product::where('id', $request->product_id)->update([
+        Product::where($product->id, $request->product_id)->update([
             "user_id" => $request->user_id,
             "category_id" => $request->category_id,
             "name" => $request->name,

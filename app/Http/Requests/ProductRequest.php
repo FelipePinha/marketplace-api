@@ -36,10 +36,10 @@ class ProductRequest extends FormRequest
     public function messages()
     {
         return [
-            'user_id.required' => 'Usuário não reconhecido',
-            'user_id.exists' => 'Usuário não validado',
-            'category_id.required' => 'Categoria não encontrada',
-            'category_id.exists' => 'Categoria não reconhecida',
+            'user_id.required' => 'O id do usuário é obrigatório',
+            'user_id.exists' => 'Este usuário não existe',
+            'category_id.required' => 'O id da categoria é obrigatório',
+            'category_id.exists' => 'Essa categoria não existe',
             'name.required' => 'O nome do produto é obrigatório.',
             'image.required' => 'É obrigatório o envio de uma imagem.',
             'description.required' => 'A descrição é obrigatória',
