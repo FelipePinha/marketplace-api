@@ -280,7 +280,7 @@
     "message": "item deletado com sucesso"
 }`
 - **Resposta de Erro:**
-  - Código: `404 Not Found`
+  - Código: `401 Unauthorized`
   - Corpo: `{ 
       'status' => false,
       'message' => 'você não tem permissão para deletar este produto.'
