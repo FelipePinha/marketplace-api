@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,9 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::delete('/products/delete/{product}', [ProductController::class, 'destroy']);
 });
 
+
 Route::get('/products', [ProductController::class, 'index']);
+Route::get('/products/recent', [ProductController::class, 'getRecentProducts']);
 Route::get('/products/{product}', [ProductController::class, 'show']);
 
+Route::get('/category/{category}', [CategoryController::class, 'show']);
