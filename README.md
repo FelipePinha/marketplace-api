@@ -293,10 +293,7 @@
 - **Método:** `GET`
 - **Descrição:** Obtém a lista de todos os produtos.
 - **Opções:**
-  - `order` (asc, desc): Ordem de exibição dos produtos.
-  - `limit`: Quantidade de produtos a serem exibidos.
-  - `category` (category_id): Exibir produtos de uma determinada categoria.
-  - `search`: Exibe produtos baseados em uma busca.
+  - `search`: Exibe produtos baseados em uma string de busca.
 - **Resposta de Sucesso:**
   - Código: `200 OK`
   - Corpo: `"products": [
