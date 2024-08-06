@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,18 +17,7 @@ class ProductController extends Controller
      * Method that returns a list of products
      */
     public function index(Request $request)
-    {     
-        // Check if has an query for category id, then filter products by the category.
-        $category_id = $request->query('category');
-        if($category_id) {
-            $category = Category::find($category_id);
-
-            return response()->json([
-                'status' => true,
-                'products' => $category->products
-            ]);
-        }
-        
+    {             
         // Check if has an search query, then filter products based on the search.
         $search = $request->query('search');
         if($search) {
@@ -39,12 +29,10 @@ class ProductController extends Controller
             ]);
         }
 
-        $order = $request->query('order', 'asc');
-        $limit = $request->query('limit', Product::count());
-
-        $products = Product::orderBy('id', $order)->limit($limit)->get();
+        $products = Product::get();
         
         return response()->json([
+            'status' => true,
             'products' => $products
         ]);
     }
@@ -112,6 +100,22 @@ class ProductController extends Controller
             'status' => true,
             'message' => 'produto editado com sucesso'
         ]);
+    }
+
+    public function getRecentProducts()
+    {
+        try {
+            $products = Product::orderBy('id', 'DESC')->limit(10)->get();
+
+            return response()->json([
+                'status' => true,
+                'products' => $products
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'recurso não encontrado.'
+            ], 404);
+        }
     }
 
     /**
