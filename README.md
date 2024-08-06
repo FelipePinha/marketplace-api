@@ -335,4 +335,58 @@
     }
 }`
 
+### Obter produtos mais recentes
+- **URL:** `/products/recent`
+- **Método:** `GET`
+- **Descrição:** Obtém detalhes dos 10 produtos mais recentes.
+- **Resposta de Sucesso:**
+  - Código: `200 OK`
+  - Corpo: `{
+    "status": boolean,
+    "product": [{
+        "id": int,
+        "user_id": int,
+        "category_id": int,
+        "name": "string",
+        "image": "string",
+        "description": "string",
+        "price": "decimal",
+        "quantity": int,
+        "created_at": "string",
+        "updated_at": "string"
+    }]
+}`
+
+### Obter produtos de uma categoria específica
+- **URL:** `/category/{category}`
+- **Método:** `GET`
+- **Descrição:** Obtém detalhes de todos os produtos relacionados a uma categoria.
+- - **Parâmetros:**
+  - `category` (integer): ID da categoria.
+- **Resposta de Sucesso:**
+  - Código: `200 OK`
+  - Corpo: `{
+    "status": boolean,
+    "category": {
+        "id": int,
+        "category_name": "string",
+        "created_at": "string",
+        "updated_at": "string",
+        "product": [
+            {
+            "id": int,
+            "user_id": int,
+            "category_id": int,
+            "name": "string",
+            "image": "string",
+            "description": "string",
+            "price": "decimal",
+            "quantity": int,
+            "created_at": "string",
+            "updated_at": "string"
+        }
+    ]
+  }
+}`
+
 
